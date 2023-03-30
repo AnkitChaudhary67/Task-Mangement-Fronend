@@ -3,7 +3,11 @@ import { BASE_URL } from "./helper";
 
 
 
+export const userRegister = async(data,header)=>{
+    return await commonrequest("POST",`${BASE_URL}/register`,data,header);
 
+    
+}
 
 export const userSignIn = async(data,header)=>{
     return await commonrequest("POST",`${BASE_URL}/login`,data,header);
@@ -43,10 +47,10 @@ export const deletUser = async(data,header)=>{
 
 // tasks
 
-export const deleteTasks= async(data,header)=>{
+export const deleteTask= async(data,header)=>{
     return await commonrequest("DELETE",`${BASE_URL}/deleteTask`,data,header);
 }
-export const taskGet = async(header)=>{
+export const taskGet = async(header,)=>{
     return await commonrequest("GET",`${BASE_URL}/getTask`,{},header);
 }
 export const registerfun = async(data,header)=>{
@@ -80,6 +84,6 @@ export const edit = async(id,data,header)=>{
 
 
 export const statusChange= async(id,data)=>{
-    return await commonrequest("PUT",`${BASE_URL}/user/status/${id}`,{data})
+    return await commonrequest("PUT",`${BASE_URL}/status/${id}`,{data})
 }
 

@@ -5,57 +5,10 @@ import { userSignIn } from '../../services/Apis';
 import { NavLink ,useNavigate} from "react-router-dom"
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
-
+import { BASE_URL } from '../../services/helper';
 
 const SignIn = () => {
     const navigate=useNavigate();
-    // const {userSignIn}=useContext(context);
-    // const [userDetail,setUserDetail]=useState({email:'',password:''});
-    // const [error,setError]=useState({});
-    // const [submit,setSubmit]=useState(false);
-    // const [eyeClick,setEyeClick]=useState(true);
-    // const [passwordType,setPasswordType]=useState("password");
-
-    // const handleEyeClick=()=>{
-    //     setEyeClick(false);
-    //     if(eyeClick){
-    //         setPasswordType("text");
-    //     }else{
-    //         setPasswordType("password");
-    //         setEyeClick(true);
-    //     }
-    // };
-
-    // const handleChange=(e)=>{
-    //     setUserDetail({...userDetail,[e.target.name]:e.target.value});
-    // }
-
-    // const handleSubmit=(e)=>{
-    //     e.preventDefault();
-    //     setError(validate(userDetail));
-    //     setSubmit(true);
-    // }
-
-    // useEffect(()=>{
-    //     if(Object.keys(error).length===0 && submit){
-    //         userSignIn(userDetail);
-    //     }
-    // },[error]);
-
-    // const validate=(values)=>{
-    //     const err={};
-    //     const emailRegex=/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i
-    //     if(!values.email){
-    //         err.email="*email is required";
-    //     }
-    //     else if(!emailRegex.test(values.email)){
-    //         err.email="*email is invalid"
-    //     }
-    //     if(!values.password){
-    //         err.password="*password is required";
-    //     }
-    //     return err;
-    // }
     const [credentials, setCredentials] = useState({
         email: '',
         password: '',
@@ -91,7 +44,7 @@ const SignIn = () => {
                 position: "top-center"
             });
         } else {
-    axios.post('http://localhost:8003/login', credentials)
+    axios.post(`${BASE_URL}/login`, credentials)
       .then(res => {
         localStorage.setItem('token', res.data.data.token);
         localStorage.setItem('userDetail', res.data.data.user);

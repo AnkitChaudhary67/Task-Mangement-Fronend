@@ -4,11 +4,10 @@ import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Badge from 'react-bootstrap/Badge';
-import { BASE_URL } from '../../services/helper';
 import { NavLink ,useNavigate} from 'react-router-dom';
 import {statusChange} from '../../services/Apis';
 import { ToastContainer, toast } from "react-toastify";
-import {  deleteTasks, taskGet } from '../../services/Apis';
+import {  deleteTask, taskGet } from '../../services/Apis';
 import { dltdata, updateData } from '../../components/Context/Provider';
 import Button from 'react-bootstrap/Button';
 
@@ -44,6 +43,7 @@ const Task = () => {
         const result = await taskGet(config);
         console.log(result);
         if (result.status === 200) {
+          console.log(result);
             setUserData(result.data.data);
         } else {
             console.log("error get users");
@@ -51,25 +51,23 @@ const Task = () => {
     }
     //User Delete
 
-    const deleteTask = async (id) => {
+    const deleteTasks = async (id) => {
         console.log('-------localStorage.getItem("token")', localStorage.getItem("token"))
         const config = {
             "Content-Type": "application/json",
             "token": localStorage.getItem("token")
         }
-        const result = await deleteTasks({ categoryId: id }, config);
+        const result = await deleteTask({ taskId: id }, config);
         if (result.status === 200) {
             await task();
-            
         } else {
             toast.error("error")
         }
     }
 
     useEffect(() => {
-       
+      taskGet();
         task();
-       
         setTimeout(() => {
             setShowSpin(false)
         }, 1000)
@@ -83,6 +81,8 @@ const Task = () => {
               <Button variant="primary" onClick={addTask}> <i className="fa-solid fa-plus"></i>&nbsp; Add Task</Button>
             </div>
           </div>
+
+          
       <Row>
         <div className='col mt-0'>
           <Card className='shadow '>
@@ -100,12 +100,12 @@ const Task = () => {
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody >
+              <tbody  >
               {
                     userdata.length > 0 ? userdata.map((element, index) => {
                       return (
                         <>
-                          <tr >
+                          <tr key={element._id}>
         
                             <td>{index + 1 }</td> 
                             <td>{element.title}</td>
@@ -143,7 +143,7 @@ const Task = () => {
                                     </NavLink>
                                   </Dropdown.Item>
                                   <Dropdown.Item >
-                                                                    <div onClick={() => deleteTask(element._id)}>
+                                                                    <div onClick={() => deleteTasks(element._id)}>
                                                                         <i className="fa-solid fa-trash" style={{ color: "red" }}></i> <span>Delete</span>
                                                                     </div>
                                                                 </Dropdown.Item>

@@ -17,10 +17,6 @@ const AddTask
 
         const navigate = useNavigate();
        
-        
-      
-        const { useradd, setUseradd } = useContext(addData);
-        const [userdata, setUserData] = useState([]);
     const [showspin, setShowSpin] = useState(true);
 
         const [inputData, setInputData] = useState({
@@ -71,7 +67,7 @@ const categoryFetch = async () => {
 
         // Status Option
         const options = [
-            { value: 'Complete', label: 'Complete' },
+            { value: 'Completed', label: 'Completed' },
             { value: 'In Progress', label: 'In Progress' },
             { value: 'Pending', label: 'Pending' },
 
@@ -99,6 +95,8 @@ const categoryFetch = async () => {
         const handleSubmitUser = async (e) => {
             e.preventDefault();
 
+      
+
             const { title, description, dueDate, priority } = inputData;
             console.log('-----------categoryId',categoryId)
             console.log('-----------assignedUserId',assignedUserId)
@@ -117,7 +115,8 @@ const categoryFetch = async () => {
             } else if (status === "") {
                 toast.error("Status is Required")
             } else {
-                const data = { title, description, categoryId, dueDate, priority, assignedUserId };
+                const data = { title, description, categoryId, dueDate, priority, assignedUserId,status };
+                console.log(data);
 
                 const config = {
                     "Content-Type": "application/json",
@@ -137,7 +136,8 @@ const categoryFetch = async () => {
                     });
                     setCategoryId("");
                     setAssignedUserId("");
-                    setStatus("")
+                    setStatus("");
+                    toast.success("Task Add Successfully")
                     navigate("/tasks");
                 } else {
                     toast.error("Error!")
@@ -146,7 +146,7 @@ const categoryFetch = async () => {
             }
 
         }
-     
+       
       
         useEffect(() => {
             userGet();
@@ -172,11 +172,6 @@ const categoryFetch = async () => {
                             </Form.Group>
                             <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
                             <label htmlFor="categoryId">Category</label>
-        {/* <select name="categoryId" id="categoryId" >
-          {categories.map(categoryId => (
-            <option key={categoryId._id} value={categoryId._id}>{categoryId.name}</option>
-          ))}
-        </select> */}
         <select id="category" name="category" value={categoryId} onChange={handleCategoryChange}>
             <option value="">Select Category</option>
             {categories.map((categoryId) => (
@@ -223,13 +218,8 @@ const categoryFetch = async () => {
                             </Form.Group>
                             <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
                             <label htmlFor="assignedUserId">Assigned User</label>
-        {/* <select name="assignedUserId" id="assignedUserId">
-          {users.map(user => (
-            <option key={user._id} value={user._id}>{user.name}</option>
-          ))}
-        </select> */}
          <select id="assignedUser" name="assignedUser" value={assignedUserId} onChange={handleUserChange}>
-            <option value="">Select Category</option>
+            <option value="">Select User</option>
             {users.map((assignedUserId) => (
               <option key={assignedUserId._id} value={assignedUserId._id}>
                 {assignedUserId.name}

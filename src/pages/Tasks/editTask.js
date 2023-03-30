@@ -6,79 +6,82 @@ import Row from 'react-bootstrap/Row';
 import Select from 'react-select';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getTaskDetail, registerfun } from '../../services/Apis';
-import { useNavigate, useParams } from "react-router-dom"
+import { editTask, getTaskDetail, registerfun } from '../../services/Apis';
+import { useNavigate , useParams} from "react-router-dom"
 import { addData } from '../../components/Context/Provider';
-import { categoryGet, userget, editTask, getTask } from '../../services/Apis';
+import {  categoryGet,userget } from '../../services/Apis';
+// import './Add.css';
 
-const UpdateTask
+const EditTask
     = () => {
 
         const navigate = useNavigate();
-        const [categories, setCategories] = useState([]);
-        const [users, setUsers] = useState([]);
-
-        const { useradd, setUseradd } = useContext(addData);
-        const [userdata, setUserData] = useState([]);
-        const [showspin, setShowSpin] = useState(true);
+       
+    const [showspin, setShowSpin] = useState(true);
 
         const [inputData, setInputData] = useState({
             title: "",
             description: "",
             dueDate: "",
             priority: "",
-            status: "",
-            categoryId: "",
-            assignedUser: ""
         })
+        const [categoryId, setCategoryId] = useState('');
+        const [assignedUserId, setAssignedUserId] = useState('');
         const [status, setStatus] = useState("Pending");
-
-        const { id: taskId } = useParams()
-
-        const categoryFetch = async () => {
-            console.log('-------localStorage.getItem("token")', localStorage.getItem("token"))
-            const config = {
-                "Content-Type": "application/json",
-                "token": localStorage.getItem("token")
-            }
-            const result = await categoryGet(config);
-            console.log(result);
-            if (result.status === 200) {
-                setCategories(result.data.data)
-                // setUserData(result.data.data);
-            } else {
-                console.log("error get users");
-            }
+        const [categories, setCategories] = useState([]);
+        const [users, setUsers] = useState([]);
+const categoryFetch = async () => {
+        console.log('-------localStorage.getItem("token")', localStorage.getItem("token"))
+        const config = {
+            "Content-Type": "application/json",
+            "token": localStorage.getItem("token")
         }
-
-        const userGet = async () => {
-            console.log('-------localStorage.getItem("token")', localStorage.getItem("token"))
-            const config = {
-                "Content-Type": "application/json",
-                "token": localStorage.getItem("token")
-            }
-            const result = await userget(config);
-            console.log(result);
-            if (result.status === 200) {
-                setUsers(result.data.data);
-
-                // setUserData(result.data.data);
-            } else {
-                console.log("error get users");
-            }
+        const result = await categoryGet(config);
+        console.log(result);
+        if (result.status === 200) {
+            setCategories(result.data.data)
+            // setUserData(result.data.data);
+        } else {
+            console.log("error get users");
         }
+    }
+
+    const userGet = async () => {
+        console.log('-------localStorage.getItem("token")', localStorage.getItem("token"))
+        const config = {
+            "Content-Type": "application/json",
+            "token": localStorage.getItem("token")
+        }
+        const result = await userget(config);
+        console.log(result);
+        if (result.status === 200) {
+            setUsers(result.data.data);
+            
+            // setUserData(result.data.data);
+        } else {
+            console.log("error get users");
+        }
+    }
 
 
 
         // Status Option
         const options = [
-            { value: 'Complete', label: 'Complete' },
+            { value: 'Completed', label: 'Completed' },
             { value: 'In Progress', label: 'In Progress' },
             { value: 'Pending', label: 'Pending' },
 
         ];
 
+        const handleCategoryChange = (event) => {
+            setCategoryId(event.target.value);
+          };
 
+          const handleUserChange = (event) => {
+            setAssignedUserId(event.target.value);
+          };
+
+          const { id: taskId } = useParams()
         // setInput value
         const setInputValue = (e) => {
             const { name, value } = e.target;
@@ -94,7 +97,11 @@ const UpdateTask
         const handleSubmitUser = async (e) => {
             e.preventDefault();
 
-            const { title, description, categoryId, dueDate, priority, assignedUser } = inputData;
+      
+
+            const { title, description, dueDate, priority } = inputData;
+            console.log('-----------categoryId',categoryId)
+            console.log('-----------assignedUserId',assignedUserId)
             if (title === "") {
                 toast.error("Title is Required")
             } else if (description === "") {
@@ -105,14 +112,13 @@ const UpdateTask
                 toast.error("DueDate is required!!")
             } else if (priority === "") {
                 toast.error("Priority is Required")
-            } else if (assignedUser === "") {
+            } else if (assignedUserId === "") {
                 toast.error("AssignedUser is Required")
             } else if (status === "") {
                 toast.error("Status is Required")
             } else {
-
-
-                const data = { title, description, categoryId, dueDate, priority, assignedUser };
+                const data = { taskId ,title, description, categoryId, dueDate, priority, assignedUserId,status };
+                console.log(data);
 
                 const config = {
                     "Content-Type": "application/json",
@@ -129,8 +135,11 @@ const UpdateTask
                         description: "",
                         dueDate: "",
                         priority: "",
-                        assignedUser: ""
                     });
+                    setCategoryId("");
+                    setAssignedUserId("");
+                    setStatus("");
+                    toast.success("Task Udpate Successfully")
                     navigate("/tasks");
                 } else {
                     toast.error("Error!")
@@ -140,33 +149,35 @@ const UpdateTask
 
         }
         const getTask = async () => {
-
+        
             const config = {
                 "Content-Type": "application/json",
                 "token": localStorage.getItem("token")
             }
-            console.log('---------taskId', taskId)
+            console.log('---------taskId',taskId)
             const result = await getTaskDetail({ taskId }, config);
             if (result.status === 200) {
-                console.log('-----------result--', result)
+                console.log('-----------result--',result)
                 // setCategoryData(result.data.data);
             } else {
                 toast.error("error")
             }
         }
-
+    
+       
+      
         useEffect(() => {
+            getTask()
             userGet();
             categoryFetch();
-            getTask();
             setTimeout(() => {
                 setShowSpin(false)
             }, 1000)
         }, [])
-
+      
         return (
             <div className='container'>
-                <h2 className='text-center mt-5'>Enter Task</h2>
+                <h2 className='text-center mt-5'>Udpate Task</h2>
                 <Card className='shadow mt-2 p-3'>
                     <Form>
                         <Row>
@@ -179,12 +190,16 @@ const UpdateTask
                                 <Form.Control type="text" name='description' value={inputData.description} onChange={setInputValue} placeholder='Enter Description Here' />
                             </Form.Group>
                             <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
-                                <label htmlFor="categoryId">Category</label>
-                                <select name="categoryId" id="categoryId">
-                                    {categories.map(categoryId => (
-                                        <option key={categoryId._id} value={categoryId._id}>{categoryId.name}</option>
-                                    ))}
-                                </select>
+                            <label htmlFor="categoryId">Category</label>
+        <select id="category" name="category" value={categoryId} onChange={handleCategoryChange}>
+            <option value="">Select Category</option>
+            {categories.map((categoryId) => (
+              <option key={categoryId._id} value={categoryId._id}>
+                {categoryId.name}
+              </option>
+            ))}
+          </select>
+        
                             </Form.Group>
                             <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
                                 <Form.Label> Due Date</Form.Label>
@@ -221,15 +236,18 @@ const UpdateTask
                                 />
                             </Form.Group>
                             <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
-                                <label htmlFor="assignedUser">Assigned User</label>
-                                <select name="assignedUser" id="assignedUser">
-                                    {users.map(user => (
-                                        <option key={user._id} value={user._id}>{user.name}</option>
-                                    ))}
-                                </select>
+                            <label htmlFor="assignedUserId">Assigned User</label>
+         <select id="assignedUser" name="assignedUser" value={assignedUserId} onChange={handleUserChange}>
+            <option value="">Select User</option>
+            {users.map((assignedUserId) => (
+              <option key={assignedUserId._id} value={assignedUserId._id}>
+                {assignedUserId.name}
+              </option>
+            ))}
+          </select>
                             </Form.Group>
                             <Button variant="danger" type="submit" onClick={handleSubmitUser}>
-                                Submit
+                               Add
                             </Button>
                         </Row>
                     </Form>
@@ -241,6 +259,13 @@ const UpdateTask
             </div>
         )
     }
+  
+
+export default EditTask;
 
 
-export default UpdateTask;
+
+
+
+
+

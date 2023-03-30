@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { addData } from '../../components/Context/Provider';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { registerfun } from '../../services/Apis';
+import { userRegister  } from '../../services/Apis';
 
 const SignUp = () => {
 
@@ -43,7 +43,7 @@ const SignUp = () => {
       
         const data= {name,email,password};
     
-        const response = await registerfun(data);
+        const response = await userRegister(data);
         
         if(response.status === 201){
           setInputData({
@@ -52,7 +52,8 @@ const SignUp = () => {
             email: "",
             password: "",
           });
-          setUseradd(response.data)
+          setUseradd(response.data);
+          toast.success("Registered Successfully")
           navigate("/");
         }else{
           toast.error("Error!")
